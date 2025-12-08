@@ -1,4 +1,6 @@
-[Femu - Modern C++ Project Template]
+# Femu
+
+[NES / Famicom Architecture](https://www.copetti.org/zh-hans/writings/consoles/nes/)
 
 本项目是一个现代 C++20 二进制应用程序模板，采用 CMake 构建系统，推荐搭配 Ninja 和 g++ 编译器。适合快速开始 C++ 项目开发。
 
