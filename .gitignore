@@ -1,6 +1,9 @@
 # Ignore build artifacts and binaries
 build/
 
+# Cache files
+*.cache
+
 ################
 # Just in case #
 ################
