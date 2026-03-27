@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(Femu LANGUAGES CXX)
+project(Nemu LANGUAGES CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 20)
@@ -19,11 +19,11 @@ if (CMAKE_GENERATOR STREQUAL "Ninja")
 endif()
 
 # Main executable
-add_executable(Femu src/main.cpp)
+add_executable(Nemu src/main.cpp)
 
 # Optional: Enable testing
-option(FEMU_ENABLE_TESTS "Enable unit tests" ON) # Turn off with -DFEMU_ENABLE_TESTS=OFF
-if(FEMU_ENABLE_TESTS)
+option(NEMU_ENABLE_TESTS "Enable unit tests" ON) # Turn off with -DNEMU_ENABLE_TESTS=OFF
+if(NEMU_ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()

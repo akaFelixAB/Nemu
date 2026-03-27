@@ -1,7 +1,7 @@
 # CMake configuration for tests
 cmake_minimum_required(VERSION 3.16)
 
-# Only compile Catch2 when FEMU_ENABLE_TESTS option is enabled in the root CMakeLists.txt
+# Only compile Catch2 when NEMU_ENABLE_TESTS option is enabled in the root CMakeLists.txt
 include(FetchContent)
 FetchContent_Declare(
     catch2
@@ -15,4 +15,4 @@ target_include_directories(test_main PRIVATE
     ${catch2_SOURCE_DIR}/src
     ${catch2_SOURCE_DIR}/src/catch2
 )
-add_test(NAME FemuTests COMMAND test_main)
+add_test(NAME NemuTests COMMAND test_main)

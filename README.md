@@ -1,12 +1,10 @@
-# Femu
+# Nemu
 
 [NES / Famicom Architecture](https://www.copetti.org/zh-hans/writings/consoles/nes/)
 
-本项目是一个现代 C++20 二进制应用程序模板，采用 CMake 构建系统，推荐搭配 Ninja 和 g++ 编译器。适合快速开始 C++ 项目开发。
-
 ## 项目结构
 ```
-Femu/
+Nemu/
 ├── src/            # 主程序源码
 │   └── main.cpp    # 示例主程序
 ├── tests/          # 单元测试（可选，默认启用 Catch2）
@@ -40,7 +38,7 @@ Femu/
 
 3. 运行主程序：
 	```fish
-	./Femu
+	./Nemu
 	```
 
 ## 单元测试（可选）
@@ -53,7 +51,7 @@ Femu/
 
 ## 关键配置说明
 - `CMakeLists.txt` 自动设置 C++20 标准，推荐 g++，并支持 Ninja。
-- 可通过 `FEMU_ENABLE_TESTS` 选项启用/禁用测试。
+- 可通过 `NEMU_ENABLE_TESTS` 选项启用/禁用测试。
 - 测试框架可选 Catch2（默认），可扩展为 Google Test。
 
 ## 现代 C++最佳实践
