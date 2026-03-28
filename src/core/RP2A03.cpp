@@ -1,5 +1,7 @@
 #include <cstdint>
+
 #include "RP2A03.h"
+
 #include "Bus.h"
 
 RP2A03::RP2A03() {
@@ -25,8 +27,6 @@ RP2A03::RP2A03() {
 		{ "BEQ", &a::BEQ, &a::REL, 2 },{ "SBC", &a::SBC, &a::IZY, 5 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 4 },{ "SBC", &a::SBC, &a::ZPX, 4 },{ "INC", &a::INC, &a::ZPX, 6 },{ "???", &a::XXX, &a::IMP, 6 },{ "SED", &a::SED, &a::IMP, 2 },{ "SBC", &a::SBC, &a::ABY, 4 },{ "NOP", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 7 },{ "???", &a::NOP, &a::IMP, 4 },{ "SBC", &a::SBC, &a::ABX, 4 },{ "INC", &a::INC, &a::ABX, 7 },{ "???", &a::XXX, &a::IMP, 7 },
 	};
 }
-
-RP2A03::~RP2A03() = default;
 
 // #######################
 // #### BUS INTERFACE ####
@@ -54,7 +54,7 @@ inline void RP2A03::SetFlag(FLAGS6502 flag, bool value) noexcept {
 // #####################
 
 // The main clock function which executes instructions
-void RP2A03::clock() noexcept {
+void RP2A03::clock() {
     if (cycles == 0) {
         // Read next opcode
         opcode = read(pc++);
@@ -74,7 +74,7 @@ void RP2A03::clock() noexcept {
     cycles--;
 }
 
-void RP2A03::reset() noexcept {
+void RP2A03::reset() {
     // Reset the CPU to a known state
     a = 0;
     x = 0;
@@ -98,7 +98,7 @@ void RP2A03::reset() noexcept {
     cycles = 8;  // Reset takes time to complete, 7/8 cycles?
 }
 
-void RP2A03::irq() noexcept {
+void RP2A03::irq() {
     // Interrupt Request (IRQ)
     // This is a maskable interrupt, meaning it can be ignored if the Interrupt
     // Disable flag is set
@@ -135,7 +135,7 @@ void RP2A03::irq() noexcept {
     }
 }
 
-void RP2A03::nmi() noexcept {
+void RP2A03::nmi() {
     // Non-Maskable Interrupt (NMI)
     // This interrupt cannot be ignored and will always be processed
 
@@ -365,7 +365,7 @@ uint8_t RP2A03::REL() noexcept {
 // #### INSTRUCTIONS ####
 // ######################
 
-uint8_t RP2A03::fetch() noexcept { // Helper function to fetch data
+uint8_t RP2A03::fetch() { // Helper function to fetch data
     if (lookup[opcode].addrmode == &RP2A03::IMP) fetched = read(addr_abs);
     return fetched;  // Return just in case...
 }

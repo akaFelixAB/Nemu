@@ -1,4 +1,6 @@
 #pragma once
+
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -6,7 +8,7 @@ class Bus;
 
 class RP2A03 {
 public:
-    RP2A03() = default;
+    explicit RP2A03();
     ~RP2A03() = default;
 
 public:
@@ -84,7 +86,7 @@ public:
 
     uint8_t XXX() noexcept; // Illegal opcode
 
-    void    clock() noexcept; // Perform one clock cycle
+    void    clock(); // Perform one clock cycle
     void    reset(); // Reset the CPU to initial state
     void    irq();   // Interrupt request
     void    nmi();   // Non-maskable interrupt request

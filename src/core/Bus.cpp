@@ -10,7 +10,7 @@ Bus::Bus() {
 
 Bus::~Bus() = default;
 
-inline void Bus::write(uint16_t addr, uint8_t data) noexcept {
+void Bus::write(uint16_t addr, uint8_t data) noexcept {
     if (addr >= 0x0000 && addr <= 0xFFFF) {
         // Address is within RAM range
 
@@ -22,7 +22,7 @@ inline void Bus::write(uint16_t addr, uint8_t data) noexcept {
     }
 }
 
-inline uint8_t Bus::read(uint16_t addr, bool bReadOnly) noexcept {
+uint8_t Bus::read(uint16_t addr, bool bReadOnly) noexcept {
     if (addr >= 0x0000 && addr <= 0xFFFF) {
         // Address is within RAM range
 

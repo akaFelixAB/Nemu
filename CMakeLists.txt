@@ -19,7 +19,7 @@ if (CMAKE_GENERATOR STREQUAL "Ninja")
 endif()
 
 # Main executable
-add_executable(Nemu src/main.cpp src/Bus.cpp src/RP2A03.cpp)
+add_executable(Nemu src/main.cpp src/core/Bus.cpp src/core/RP2A03.cpp)
 
 # Optional: Enable testing
 option(NEMU_ENABLE_TESTS "Enable unit tests" ON) # Turn off with -DNEMU_ENABLE_TESTS=OFF
