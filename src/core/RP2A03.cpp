@@ -80,8 +80,8 @@ void RP2A03::reset() {
     x = 0;
     y = 0;
     sp = 0xFD;          // Stack Pointer starts at 0xFD after reset
-    status = 0x00 | U;  // Clear all flags except for the unused flag which is
-                        // always set to 1
+    status = 0x00 | U | I;  // Clear all flags except for the unused flag and
+                            // the interrupt disable flag, which are set after reset
 
     addr_abs =
         RESET_VECTOR;  // The reset vector is located at 0xFFFC and 0xFFFD
@@ -366,7 +366,8 @@ uint8_t RP2A03::REL() noexcept {
 // ######################
 
 uint8_t RP2A03::fetch() { // Helper function to fetch data
-    if (lookup[opcode].addrmode == &RP2A03::IMP) fetched = read(addr_abs);
+    if (lookup[opcode].addrmode != &RP2A03::IMP)
+        fetched = read(addr_abs);
     return fetched;  // Return just in case...
 }
 
@@ -859,7 +860,7 @@ uint8_t RP2A03::PLA() noexcept { // Pop Accumulator
 uint8_t RP2A03::PHP() noexcept { // Push Processor Status
     write(STACK_BASE + sp, status | B | U);
     SetFlag(B, 0);
-    SetFlag(U, 0);
+    SetFlag(U, 1);
     sp--;
     return 0;
 }
