@@ -859,7 +859,7 @@ uint8_t RP2A03::PLA() noexcept { // Pop Accumulator
 
 uint8_t RP2A03::PHP() noexcept { // Push Processor Status
     write(STACK_BASE + sp, status | B | U);
-    SetFlag(B, 0);
+    SetFlag(B, 1);
     SetFlag(U, 1);
     sp--;
     return 0;
@@ -877,8 +877,8 @@ uint8_t RP2A03::PLP() noexcept { // Pop Processor Status
 uint8_t RP2A03::RTI() noexcept { // Return from Interrupt
     sp++;
     status = read(STACK_BASE + sp); // Pull the processor status from the stack
-    status &= ~B;                   // Clear the Break flag
-    status |= U;                    // Set the unused flag to 1 (it is always set to 1)
+    SetFlag(B, 0);                  // Clear the Break flag
+    SetFlag(U, 1);                  // Set the unused flag to 1 (it is always set to 1)
     
     sp++;
     uint16_t lo = read(STACK_BASE + sp); // Pull the low byte of the program counter from the stack
@@ -902,16 +902,18 @@ uint8_t RP2A03::RTS() noexcept { // Return from Subroutine
 uint8_t RP2A03::BRK() noexcept { // Force Interrupt
     pc++;
 
-    SetFlag(I, 1);
+    SetFlag(I, 1); // Set Interrupt Disable flag to prevent further interrupts
     write(STACK_BASE + sp, (pc >> 8) & 0x00FF);
     sp--;
     write(STACK_BASE + sp, pc & 0x00FF);
     sp--;
 
-    SetFlag(B, 1);
-    write(STACK_BASE + sp, status);
+    // When a BRK instruction is executed, the processor pushes the 
+    // status of the processor onto the stack with the Break flag set to 1
+    // (not the actual Break flag in the status register, but a copy of the status with the Break flag set)
+    temp = status | B | U;
+    write(STACK_BASE + sp, temp);
     sp--;
-    SetFlag(B, 0);
 
     addr_abs = IRQ_VECTOR;
     uint16_t lo = read(addr_abs + 0);
