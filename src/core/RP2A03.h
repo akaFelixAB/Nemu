@@ -1,8 +1,9 @@
 #pragma once
 
 #include <cstdint>
-#include <string>
-#include <vector>
+#include <string_view>
+#include <array>
+#include <map>
 
 class Bus;
 
@@ -26,22 +27,54 @@ public:
         N = (1 << 7), // Negative
     };
 
-    uint8_t  x = 0x00; // X Register
-    uint8_t  y = 0x00; // Y Register
-    uint8_t  a = 0x00; // Accumulator Register
-    uint8_t  sp = 0x00; // Stack Pointer (points to location on bus)
-    uint16_t pc = 0x0000; // Program Counter
-    uint8_t  status = 0x00; // Status Register
+    uint8_t  x{0x00};      // X Register
+    uint8_t  y{0x00};      // Y Register
+    uint8_t  a{0x00};      // Accumulator Register
+    uint8_t  sp{0x00};     // Stack Pointer (points to location on bus)
+    uint16_t pc{0x0000};   // Program Counter
+    uint8_t  status{0x00}; // Status Register
 
-    constexpr static uint16_t STACK_BASE = 0x0100; // Stack starts at 0x0100 and grows downwards
-    constexpr static uint16_t RESET_VECTOR = 0xFFFC; // Reset vector is located at 0xFFFC and 0xFFFD
-    constexpr static uint16_t NMI_VECTOR = 0xFFFA; // Non-maskable interrupt vector is located at 0xFFFA and 0xFFFB
-    constexpr static uint16_t IRQ_VECTOR = 0xFFFE; // Interrupt request vector is located at 0xFFFE and 0xFFFF
+    constexpr static uint16_t STACK_BASE{0x0100};      // Stack starts at 0x0100 and grows downwards
+    constexpr static uint16_t RESET_VECTOR{0xFFFC};    // Reset vector is located at 0xFFFC and 0xFFFD
+    constexpr static uint16_t NMI_VECTOR{0xFFFA};      // Non-maskable interrupt vector is located at 0xFFFA and 0xFFFB
+    constexpr static uint16_t IRQ_VECTOR{0xFFFE};      // Interrupt request vector is located at 0xFFFE and 0xFFFF
 
     void ConnectBus(Bus* n) { bus = n; }
+    const auto& getLookup() const noexcept { return lookup; }
+
+    enum class DEBUG_NMEMONIC : uint8_t {
+        ADC, AND, ASL, 
+        BCC, BCS, BEQ, BIT, BMI, BNE, BPL, BRK, BVC, BVS, 
+        CLC, CLD, CLI, CLV, CMP, CPX, CPY, 
+        DEC, DEX, DEY, 
+        EOR,  
+        INC, INX, INY, 
+        JMP, JSR, 
+        LDA, LDX, LDY, LSR, 
+        NOP, 
+        ORA, 
+        PHA, PHP, PLA, PLP, 
+        ROL, ROR, RTI, RTS, 
+        SBC, SEC, SED, SEI, STA, STX, STY, 
+        TAX, TAY, TSX, TXA, TXS, TYA, 
+        XXX
+    };
+
+    enum class DEBUG_ADDRESSING_MODE : uint8_t {
+        IMP, ACC, IMM, ZP0, ZPX, ZPY, REL, ABS, ABX, ABY, IND, IZX, IZY
+    };
+
+    struct INSTRUCTION {
+        DEBUG_NMEMONIC debug_nmemonic;
+        DEBUG_ADDRESSING_MODE debug_addrmode;
+        uint8_t (RP2A03::*operate)(void){nullptr};
+        uint8_t (RP2A03::*addrmode)(void){nullptr};
+        uint8_t cycles{0};
+    };
 
     // Addressing modes
     uint8_t IMP() noexcept; // Implied
+    uint8_t ACC() noexcept; // Accumulator
     uint8_t IMM() noexcept; // Immediate
     uint8_t ZP0() noexcept; // Zero Page
     uint8_t ZPX() noexcept; // Zero Page,X
@@ -91,32 +124,25 @@ public:
     void    irq();   // Interrupt request
     void    nmi();   // Non-maskable interrupt request
 
-    uint8_t     fetch();           // Fetch data from memory (based on addressing mode)
-    uint8_t     fetched = 0x00;    // Represents the working input value to the ALU
-    uint16_t    temp    = 0x0000;  // Convenience variable used everywhere
+    uint8_t     fetch();          // Fetch data from memory (based on addressing mode)
+    uint8_t     fetched{0x00};    // Represents the working input value to the ALU
+    uint16_t    temp{0x0000};     // Convenience variable used everywhere
 
-    uint16_t    addr_abs = 0x0000; // Absolute address after all calculations
-    uint16_t    addr_rel = 0x0000; // Relative address for branch instructions
-    uint8_t     opcode   = 0x00;   // Current opcode
-    uint8_t     cycles   = 0;      // Cycles remaining for current instruction
+    uint16_t    addr_abs{0x0000}; // Absolute address after all calculations
+    uint16_t    addr_rel{0x0000}; // Relative address for branch instructions
+    uint8_t     opcode{0x00};     // Current opcode
+    uint8_t     cycles{0};        // Cycles remaining for current instruction
 
 private:
-    Bus* bus = nullptr;
+    Bus* bus{nullptr};
 
-    // Private methods
-    inline uint8_t  read(uint16_t addr) noexcept;
+    // Private IO functions
+    inline uint8_t  read(uint16_t addr) const noexcept;
     inline void     write(uint16_t addr, uint8_t data) noexcept;
 
     // get flag & set flag (just for convenience)
     inline uint8_t  GetFlag(FLAGS6502 flag) const noexcept;
     inline void     SetFlag(FLAGS6502 flag, bool value) noexcept;
 
-    struct INSTRUCTION {
-        std::string name;
-        uint8_t (RP2A03::*operate)(void) = nullptr;
-        uint8_t (RP2A03::*addrmode)(void) = nullptr;
-        uint8_t cycles = 0;
-    };
-
-    std::vector<INSTRUCTION> lookup;
+    std::array<INSTRUCTION, 256> lookup;
 };
