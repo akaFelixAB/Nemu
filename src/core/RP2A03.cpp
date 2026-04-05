@@ -530,7 +530,7 @@ uint8_t RP2A03::ASL() noexcept { // Arithmetic Shift Left
     SetFlag(C, (temp & 0xFF00) > 0);     // Set Carry flag if the highest bit of the original value is 1 (indicates a shift out of the byte)
     SetFlag(Z, (temp & 0x00FF) == 0x00); // Set Zero flag if result is zero
     SetFlag(N, temp & 0x0080);           // Set Negative flag if result's highest bit is set to 1
-    if (lookup[opcode].addrmode == &RP2A03::IMP)
+    if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;               // If the instruction operates on the accumulator, store the result back in the accumulator
     else
         write(addr_abs, temp & 0x00FF);
@@ -543,7 +543,7 @@ uint8_t RP2A03::LSR() noexcept { // Logical Shift Right
     temp = fetched >> 1;
     SetFlag(Z, (temp & 0x00FF) == 0x0000);
     SetFlag(N, temp & 0x0080);
-    if (lookup[opcode].addrmode == &RP2A03::IMP)
+    if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;
     else
         write(addr_abs, temp & 0x00FF);
@@ -560,7 +560,7 @@ uint8_t RP2A03::ROL() noexcept { // Rotate Left
     SetFlag(C, temp & 0xFF00);
     SetFlag(Z, (temp & 0x00FF) == 0x0000);
     SetFlag(N, temp & 0x0080);
-    if (lookup[opcode].addrmode == &RP2A03::IMP)
+    if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;
     else
         write(addr_abs, temp & 0x00FF);
@@ -574,7 +574,7 @@ uint8_t RP2A03::ROR() noexcept { // Rotate Right
     SetFlag(C, fetched & 0x01);
     SetFlag(Z, (temp & 0x00FF) == 0x00);
     SetFlag(N, temp & 0x0080);
-    if (lookup[opcode].addrmode == &RP2A03::IMP)
+    if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;
     else
         write(addr_abs, temp & 0x00FF);
