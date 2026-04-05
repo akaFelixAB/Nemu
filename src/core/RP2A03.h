@@ -42,7 +42,7 @@ public:
     void ConnectBus(Bus* n) { bus = n; }
     const auto& getLookup() const noexcept { return lookup; }
 
-    enum class DEBUG_NMEMONIC : uint8_t {
+    enum class DEBUG_MNEMONIC : uint8_t {
         ADC, AND, ASL, 
         BCC, BCS, BEQ, BIT, BMI, BNE, BPL, BRK, BVC, BVS, 
         CLC, CLD, CLI, CLV, CMP, CPX, CPY, 
@@ -57,15 +57,17 @@ public:
         ROL, ROR, RTI, RTS, 
         SBC, SEC, SED, SEI, STA, STX, STY, 
         TAX, TAY, TSX, TXA, TXS, TYA, 
-        XXX
+        XXX,  // Illegal opcode
+        COUNT // Total number of mnemonics (used for validation)
     };
 
     enum class DEBUG_ADDRESSING_MODE : uint8_t {
-        IMP, ACC, IMM, ZP0, ZPX, ZPY, REL, ABS, ABX, ABY, IND, IZX, IZY
+        IMP, ACC, IMM, ZP0, ZPX, ZPY, REL, ABS, ABX, ABY, IND, IZX, IZY, 
+        COUNT // Total number of addressing modes (used for validation)
     };
 
     struct INSTRUCTION {
-        DEBUG_NMEMONIC debug_nmemonic;
+        DEBUG_MNEMONIC debug_mnemonic;
         DEBUG_ADDRESSING_MODE debug_addrmode;
         uint8_t (RP2A03::*operate)(void){nullptr};
         uint8_t (RP2A03::*addrmode)(void){nullptr};

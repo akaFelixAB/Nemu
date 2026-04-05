@@ -6,7 +6,7 @@
 
 RP2A03::RP2A03() {
     using a = RP2A03;
-    using op = RP2A03::DEBUG_NMEMONIC;
+    using op = RP2A03::DEBUG_MNEMONIC;
     using am = RP2A03::DEBUG_ADDRESSING_MODE;
     // Initialize the instruction lookup table
     // Corresponding to the 256 opcodes table
