@@ -2,7 +2,6 @@
 
 #include <array>
 #include <cstdint>
-#include <functional>
 #include <span>
 #include <string>
 #include <string_view>
@@ -52,7 +51,7 @@ public:
             case M::ABX:
             case M::ABY:
             case M::IND:
-                return 3; // e.g. "JMP $1234" or "LDA ($20),Y"
+                return 3;  // e.g. "JMP $1234" or "LDA $1234,Y"
 
             default:
                 return 1; // Unknown/invalid addressing mode
