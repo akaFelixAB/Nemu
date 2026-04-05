@@ -37,7 +37,7 @@ public:
         switch (m) {
             case M::IMP:
             case M::ACC:
-                return 1; // e.x. "CLC" or "ASL A"
+                return 1; // e.g. "CLC" or "ASL A"
 
             case M::IMM:
             case M::ZP0:
@@ -46,16 +46,17 @@ public:
             case M::REL:
             case M::IZX:
             case M::IZY:
-                return 2; // e.x. "LDA #$01" or "STA $02,X"
+                return 2; // e.g. "LDA #$01" or "STA $02,X"
 
             case M::ABS:
             case M::ABX:
             case M::ABY:
             case M::IND:
-                return 3; // e.x. "JMP $1234" or "LDA ($20),Y"
+                return 3; // e.g. "JMP $1234" or "LDA ($20),Y"
 
-            default: 
-                return 0; // Invalid addressing mode
+            default:
+                return 1; // Unknown/invalid addressing mode
+                // Treat as opcode-only to ensure forward progress
         }
     }
 

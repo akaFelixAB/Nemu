@@ -75,30 +75,30 @@ std::string Disassembler::format(const DisasmLine& line) const {
             break;
 
         case AM::IMM:
-            // e.x. "LDA #$01"
+            // e.g. "LDA #$01"
             operand.push_back('#');
             appendDollarHex8(operand, op1);
             break;
 
         case AM::ZP0:
-            // e.x. "LDA $02"
+            // e.g. "LDA $02"
             appendDollarHex8(operand, op1);
             break;
 
         case AM::ZPX:
-            // e.x. "LDA $02,X"
+            // e.g. "LDA $02,X"
             appendDollarHex8(operand, op1);
             operand.append(",X");
             break;
 
         case AM::ZPY:
-            // e.x. "LDA $02,Y"
+            // e.g. "LDA $02,Y"
             appendDollarHex8(operand, op1);
             operand.append(",Y");
             break;
 
         case AM::ABS: {
-            // e.x. "JMP $1234"
+            // e.g. "JMP $1234"
             const uint16_t a =
                 static_cast<uint16_t>(op1) | (static_cast<uint16_t>(op2) << 8);
             appendDollarHex16(operand, a);
@@ -106,7 +106,7 @@ std::string Disassembler::format(const DisasmLine& line) const {
         }
 
         case AM::ABX: {
-            // e.x. "LDA $1234,X"
+            // e.g. "LDA $1234,X"
             const uint16_t a =
                 static_cast<uint16_t>(op1) | (static_cast<uint16_t>(op2) << 8);
             appendDollarHex16(operand, a);
@@ -115,7 +115,7 @@ std::string Disassembler::format(const DisasmLine& line) const {
         }
 
         case AM::ABY: {
-            // e.x. "LDA $1234,Y"
+            // e.g. "LDA $1234,Y"
             const uint16_t a =
                 static_cast<uint16_t>(op1) | (static_cast<uint16_t>(op2) << 8);
             appendDollarHex16(operand, a);
@@ -124,7 +124,7 @@ std::string Disassembler::format(const DisasmLine& line) const {
         }
 
         case AM::IND: {
-            // e.x. "JMP ($1234)"
+            // e.g. "JMP ($1234)"
             const uint16_t a =
                 static_cast<uint16_t>(op1) | (static_cast<uint16_t>(op2) << 8);
             operand.push_back('(');
@@ -134,21 +134,21 @@ std::string Disassembler::format(const DisasmLine& line) const {
         }
 
         case AM::IZX:
-            // e.x. "LDA ($20,X)"
+            // e.g. "LDA ($20,X)"
             operand.push_back('(');
             appendDollarHex8(operand, op1);
             operand.append(",X)");
             break;
 
         case AM::IZY:
-            // e.x. "LDA ($20),Y"
+            // e.g. "LDA ($20),Y"
             operand.push_back('(');
             appendDollarHex8(operand, op1);
             operand.append("),Y");
             break;
 
         case AM::REL: {
-            // e.x. "BEQ $1234" (branch target)
+            // e.g. "BEQ $1234" (branch target)
             // The operand is a signed offset from the next instruction address (line.next)
             // branch target = line.next + signed offset
             const int8_t rel = static_cast<int8_t>(op1);
