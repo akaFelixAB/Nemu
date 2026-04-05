@@ -379,8 +379,11 @@ uint8_t RP2A03::REL() noexcept {
 // ######################
 
 uint8_t RP2A03::fetch() { // Helper function to fetch data
-    if (lookup[opcode].addrmode != &RP2A03::IMP)
+    if (lookup[opcode].addrmode != &RP2A03::IMP && lookup[opcode].addrmode != &RP2A03::ACC) {
+        // If the instruction does not use implied or accumulator addressing mode,
+        // we need to fetch the data from the effective address
         fetched = read(addr_abs);
+    }
     return fetched;  // Return just in case...
 }
 
