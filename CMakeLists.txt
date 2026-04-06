@@ -31,7 +31,7 @@ FetchContent_Declare(
 )
 
 option(NEMU_ENABLE_TESTS "Enable unit tests" ON) # Turn off with -DNEMU_ENABLE_TESTS=OFF
-if(NEMU_ENABLE_TESTS)
+if (NEMU_ENABLE_TESTS)
     enable_testing()
     FetchContent_MakeAvailable(Catch2)
     add_subdirectory(tests)
