@@ -21,9 +21,18 @@ endif()
 # Main executable
 add_executable(Nemu src/main.cpp src/core/Bus.cpp src/core/RP2A03.cpp src/utils/Disassembler.cpp)
 
-# Optional: Enable testing
+# Testing
+include(FetchContent)
+
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.5.2
+)
+
 option(NEMU_ENABLE_TESTS "Enable unit tests" ON) # Turn off with -DNEMU_ENABLE_TESTS=OFF
 if(NEMU_ENABLE_TESTS)
     enable_testing()
+    FetchContent_MakeAvailable(Catch2)
     add_subdirectory(tests)
 endif()
