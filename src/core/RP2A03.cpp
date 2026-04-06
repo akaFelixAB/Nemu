@@ -6,33 +6,35 @@
 
 RP2A03::RP2A03() {
     using a = RP2A03;
+    using op = RP2A03::DEBUG_MNEMONIC;
+    using am = RP2A03::DEBUG_ADDRESSING_MODE;
     // Initialize the instruction lookup table
     // Corresponding to the 256 opcodes table
-    lookup = {
-		{ "BRK", &a::BRK, &a::IMM, 7 },{ "ORA", &a::ORA, &a::IZX, 6 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 3 },{ "ORA", &a::ORA, &a::ZP0, 3 },{ "ASL", &a::ASL, &a::ZP0, 5 },{ "???", &a::XXX, &a::IMP, 5 },{ "PHP", &a::PHP, &a::IMP, 3 },{ "ORA", &a::ORA, &a::IMM, 2 },{ "ASL", &a::ASL, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::NOP, &a::IMP, 4 },{ "ORA", &a::ORA, &a::ABS, 4 },{ "ASL", &a::ASL, &a::ABS, 6 },{ "???", &a::XXX, &a::IMP, 6 },
-		{ "BPL", &a::BPL, &a::REL, 2 },{ "ORA", &a::ORA, &a::IZY, 5 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 4 },{ "ORA", &a::ORA, &a::ZPX, 4 },{ "ASL", &a::ASL, &a::ZPX, 6 },{ "???", &a::XXX, &a::IMP, 6 },{ "CLC", &a::CLC, &a::IMP, 2 },{ "ORA", &a::ORA, &a::ABY, 4 },{ "???", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 7 },{ "???", &a::NOP, &a::IMP, 4 },{ "ORA", &a::ORA, &a::ABX, 4 },{ "ASL", &a::ASL, &a::ABX, 7 },{ "???", &a::XXX, &a::IMP, 7 },
-		{ "JSR", &a::JSR, &a::ABS, 6 },{ "AND", &a::AND, &a::IZX, 6 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "BIT", &a::BIT, &a::ZP0, 3 },{ "AND", &a::AND, &a::ZP0, 3 },{ "ROL", &a::ROL, &a::ZP0, 5 },{ "???", &a::XXX, &a::IMP, 5 },{ "PLP", &a::PLP, &a::IMP, 4 },{ "AND", &a::AND, &a::IMM, 2 },{ "ROL", &a::ROL, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 2 },{ "BIT", &a::BIT, &a::ABS, 4 },{ "AND", &a::AND, &a::ABS, 4 },{ "ROL", &a::ROL, &a::ABS, 6 },{ "???", &a::XXX, &a::IMP, 6 },
-		{ "BMI", &a::BMI, &a::REL, 2 },{ "AND", &a::AND, &a::IZY, 5 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 4 },{ "AND", &a::AND, &a::ZPX, 4 },{ "ROL", &a::ROL, &a::ZPX, 6 },{ "???", &a::XXX, &a::IMP, 6 },{ "SEC", &a::SEC, &a::IMP, 2 },{ "AND", &a::AND, &a::ABY, 4 },{ "???", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 7 },{ "???", &a::NOP, &a::IMP, 4 },{ "AND", &a::AND, &a::ABX, 4 },{ "ROL", &a::ROL, &a::ABX, 7 },{ "???", &a::XXX, &a::IMP, 7 },
-		{ "RTI", &a::RTI, &a::IMP, 6 },{ "EOR", &a::EOR, &a::IZX, 6 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 3 },{ "EOR", &a::EOR, &a::ZP0, 3 },{ "LSR", &a::LSR, &a::ZP0, 5 },{ "???", &a::XXX, &a::IMP, 5 },{ "PHA", &a::PHA, &a::IMP, 3 },{ "EOR", &a::EOR, &a::IMM, 2 },{ "LSR", &a::LSR, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 2 },{ "JMP", &a::JMP, &a::ABS, 3 },{ "EOR", &a::EOR, &a::ABS, 4 },{ "LSR", &a::LSR, &a::ABS, 6 },{ "???", &a::XXX, &a::IMP, 6 },
-		{ "BVC", &a::BVC, &a::REL, 2 },{ "EOR", &a::EOR, &a::IZY, 5 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 4 },{ "EOR", &a::EOR, &a::ZPX, 4 },{ "LSR", &a::LSR, &a::ZPX, 6 },{ "???", &a::XXX, &a::IMP, 6 },{ "CLI", &a::CLI, &a::IMP, 2 },{ "EOR", &a::EOR, &a::ABY, 4 },{ "???", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 7 },{ "???", &a::NOP, &a::IMP, 4 },{ "EOR", &a::EOR, &a::ABX, 4 },{ "LSR", &a::LSR, &a::ABX, 7 },{ "???", &a::XXX, &a::IMP, 7 },
-		{ "RTS", &a::RTS, &a::IMP, 6 },{ "ADC", &a::ADC, &a::IZX, 6 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 3 },{ "ADC", &a::ADC, &a::ZP0, 3 },{ "ROR", &a::ROR, &a::ZP0, 5 },{ "???", &a::XXX, &a::IMP, 5 },{ "PLA", &a::PLA, &a::IMP, 4 },{ "ADC", &a::ADC, &a::IMM, 2 },{ "ROR", &a::ROR, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 2 },{ "JMP", &a::JMP, &a::IND, 5 },{ "ADC", &a::ADC, &a::ABS, 4 },{ "ROR", &a::ROR, &a::ABS, 6 },{ "???", &a::XXX, &a::IMP, 6 },
-		{ "BVS", &a::BVS, &a::REL, 2 },{ "ADC", &a::ADC, &a::IZY, 5 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 4 },{ "ADC", &a::ADC, &a::ZPX, 4 },{ "ROR", &a::ROR, &a::ZPX, 6 },{ "???", &a::XXX, &a::IMP, 6 },{ "SEI", &a::SEI, &a::IMP, 2 },{ "ADC", &a::ADC, &a::ABY, 4 },{ "???", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 7 },{ "???", &a::NOP, &a::IMP, 4 },{ "ADC", &a::ADC, &a::ABX, 4 },{ "ROR", &a::ROR, &a::ABX, 7 },{ "???", &a::XXX, &a::IMP, 7 },
-		{ "???", &a::NOP, &a::IMP, 2 },{ "STA", &a::STA, &a::IZX, 6 },{ "???", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 6 },{ "STY", &a::STY, &a::ZP0, 3 },{ "STA", &a::STA, &a::ZP0, 3 },{ "STX", &a::STX, &a::ZP0, 3 },{ "???", &a::XXX, &a::IMP, 3 },{ "DEY", &a::DEY, &a::IMP, 2 },{ "???", &a::NOP, &a::IMP, 2 },{ "TXA", &a::TXA, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 2 },{ "STY", &a::STY, &a::ABS, 4 },{ "STA", &a::STA, &a::ABS, 4 },{ "STX", &a::STX, &a::ABS, 4 },{ "???", &a::XXX, &a::IMP, 4 },
-		{ "BCC", &a::BCC, &a::REL, 2 },{ "STA", &a::STA, &a::IZY, 6 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 6 },{ "STY", &a::STY, &a::ZPX, 4 },{ "STA", &a::STA, &a::ZPX, 4 },{ "STX", &a::STX, &a::ZPY, 4 },{ "???", &a::XXX, &a::IMP, 4 },{ "TYA", &a::TYA, &a::IMP, 2 },{ "STA", &a::STA, &a::ABY, 5 },{ "TXS", &a::TXS, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 5 },{ "???", &a::NOP, &a::IMP, 5 },{ "STA", &a::STA, &a::ABX, 5 },{ "???", &a::XXX, &a::IMP, 5 },{ "???", &a::XXX, &a::IMP, 5 },
-		{ "LDY", &a::LDY, &a::IMM, 2 },{ "LDA", &a::LDA, &a::IZX, 6 },{ "LDX", &a::LDX, &a::IMM, 2 },{ "???", &a::XXX, &a::IMP, 6 },{ "LDY", &a::LDY, &a::ZP0, 3 },{ "LDA", &a::LDA, &a::ZP0, 3 },{ "LDX", &a::LDX, &a::ZP0, 3 },{ "???", &a::XXX, &a::IMP, 3 },{ "TAY", &a::TAY, &a::IMP, 2 },{ "LDA", &a::LDA, &a::IMM, 2 },{ "TAX", &a::TAX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 2 },{ "LDY", &a::LDY, &a::ABS, 4 },{ "LDA", &a::LDA, &a::ABS, 4 },{ "LDX", &a::LDX, &a::ABS, 4 },{ "???", &a::XXX, &a::IMP, 4 },
-		{ "BCS", &a::BCS, &a::REL, 2 },{ "LDA", &a::LDA, &a::IZY, 5 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 5 },{ "LDY", &a::LDY, &a::ZPX, 4 },{ "LDA", &a::LDA, &a::ZPX, 4 },{ "LDX", &a::LDX, &a::ZPY, 4 },{ "???", &a::XXX, &a::IMP, 4 },{ "CLV", &a::CLV, &a::IMP, 2 },{ "LDA", &a::LDA, &a::ABY, 4 },{ "TSX", &a::TSX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 4 },{ "LDY", &a::LDY, &a::ABX, 4 },{ "LDA", &a::LDA, &a::ABX, 4 },{ "LDX", &a::LDX, &a::ABY, 4 },{ "???", &a::XXX, &a::IMP, 4 },
-		{ "CPY", &a::CPY, &a::IMM, 2 },{ "CMP", &a::CMP, &a::IZX, 6 },{ "???", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "CPY", &a::CPY, &a::ZP0, 3 },{ "CMP", &a::CMP, &a::ZP0, 3 },{ "DEC", &a::DEC, &a::ZP0, 5 },{ "???", &a::XXX, &a::IMP, 5 },{ "INY", &a::INY, &a::IMP, 2 },{ "CMP", &a::CMP, &a::IMM, 2 },{ "DEX", &a::DEX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 2 },{ "CPY", &a::CPY, &a::ABS, 4 },{ "CMP", &a::CMP, &a::ABS, 4 },{ "DEC", &a::DEC, &a::ABS, 6 },{ "???", &a::XXX, &a::IMP, 6 },
-		{ "BNE", &a::BNE, &a::REL, 2 },{ "CMP", &a::CMP, &a::IZY, 5 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 4 },{ "CMP", &a::CMP, &a::ZPX, 4 },{ "DEC", &a::DEC, &a::ZPX, 6 },{ "???", &a::XXX, &a::IMP, 6 },{ "CLD", &a::CLD, &a::IMP, 2 },{ "CMP", &a::CMP, &a::ABY, 4 },{ "NOP", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 7 },{ "???", &a::NOP, &a::IMP, 4 },{ "CMP", &a::CMP, &a::ABX, 4 },{ "DEC", &a::DEC, &a::ABX, 7 },{ "???", &a::XXX, &a::IMP, 7 },
-		{ "CPX", &a::CPX, &a::IMM, 2 },{ "SBC", &a::SBC, &a::IZX, 6 },{ "???", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "CPX", &a::CPX, &a::ZP0, 3 },{ "SBC", &a::SBC, &a::ZP0, 3 },{ "INC", &a::INC, &a::ZP0, 5 },{ "???", &a::XXX, &a::IMP, 5 },{ "INX", &a::INX, &a::IMP, 2 },{ "SBC", &a::SBC, &a::IMM, 2 },{ "NOP", &a::NOP, &a::IMP, 2 },{ "???", &a::SBC, &a::IMP, 2 },{ "CPX", &a::CPX, &a::ABS, 4 },{ "SBC", &a::SBC, &a::ABS, 4 },{ "INC", &a::INC, &a::ABS, 6 },{ "???", &a::XXX, &a::IMP, 6 },
-		{ "BEQ", &a::BEQ, &a::REL, 2 },{ "SBC", &a::SBC, &a::IZY, 5 },{ "???", &a::XXX, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 8 },{ "???", &a::NOP, &a::IMP, 4 },{ "SBC", &a::SBC, &a::ZPX, 4 },{ "INC", &a::INC, &a::ZPX, 6 },{ "???", &a::XXX, &a::IMP, 6 },{ "SED", &a::SED, &a::IMP, 2 },{ "SBC", &a::SBC, &a::ABY, 4 },{ "NOP", &a::NOP, &a::IMP, 2 },{ "???", &a::XXX, &a::IMP, 7 },{ "???", &a::NOP, &a::IMP, 4 },{ "SBC", &a::SBC, &a::ABX, 4 },{ "INC", &a::INC, &a::ABX, 7 },{ "???", &a::XXX, &a::IMP, 7 },
-	};
+    lookup = {{
+		{ op::BRK, am::IMM, &a::BRK, &a::IMM, 7 },{ op::ORA, am::IZX, &a::ORA, &a::IZX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 3 },{ op::ORA, am::ZP0, &a::ORA, &a::ZP0, 3 },{ op::ASL, am::ZP0, &a::ASL, &a::ZP0, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },{ op::PHP, am::IMP, &a::PHP, &a::IMP, 3 },{ op::ORA, am::IMM, &a::ORA, &a::IMM, 2 },{ op::ASL, am::ACC, &a::ASL, &a::ACC, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::ORA, am::ABS, &a::ORA, &a::ABS, 4 },{ op::ASL, am::ABS, &a::ASL, &a::ABS, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },
+		{ op::BPL, am::REL, &a::BPL, &a::REL, 2 },{ op::ORA, am::IZY, &a::ORA, &a::IZY, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::ORA, am::ZPX, &a::ORA, &a::ZPX, 4 },{ op::ASL, am::ZPX, &a::ASL, &a::ZPX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },{ op::CLC, am::IMP, &a::CLC, &a::IMP, 2 },{ op::ORA, am::ABY, &a::ORA, &a::ABY, 4 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::ORA, am::ABX, &a::ORA, &a::ABX, 4 },{ op::ASL, am::ABX, &a::ASL, &a::ABX, 7 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },
+		{ op::JSR, am::ABS, &a::JSR, &a::ABS, 6 },{ op::AND, am::IZX, &a::AND, &a::IZX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::BIT, am::ZP0, &a::BIT, &a::ZP0, 3 },{ op::AND, am::ZP0, &a::AND, &a::ZP0, 3 },{ op::ROL, am::ZP0, &a::ROL, &a::ZP0, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },{ op::PLP, am::IMP, &a::PLP, &a::IMP, 4 },{ op::AND, am::IMM, &a::AND, &a::IMM, 2 },{ op::ROL, am::ACC, &a::ROL, &a::ACC, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::BIT, am::ABS, &a::BIT, &a::ABS, 4 },{ op::AND, am::ABS, &a::AND, &a::ABS, 4 },{ op::ROL, am::ABS, &a::ROL, &a::ABS, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },
+		{ op::BMI, am::REL, &a::BMI, &a::REL, 2 },{ op::AND, am::IZY, &a::AND, &a::IZY, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::AND, am::ZPX, &a::AND, &a::ZPX, 4 },{ op::ROL, am::ZPX, &a::ROL, &a::ZPX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },{ op::SEC, am::IMP, &a::SEC, &a::IMP, 2 },{ op::AND, am::ABY, &a::AND, &a::ABY, 4 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::AND, am::ABX, &a::AND, &a::ABX, 4 },{ op::ROL, am::ABX, &a::ROL, &a::ABX, 7 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },
+		{ op::RTI, am::IMP, &a::RTI, &a::IMP, 6 },{ op::EOR, am::IZX, &a::EOR, &a::IZX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 3 },{ op::EOR, am::ZP0, &a::EOR, &a::ZP0, 3 },{ op::LSR, am::ZP0, &a::LSR, &a::ZP0, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },{ op::PHA, am::IMP, &a::PHA, &a::IMP, 3 },{ op::EOR, am::IMM, &a::EOR, &a::IMM, 2 },{ op::LSR, am::ACC, &a::LSR, &a::ACC, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::JMP, am::ABS, &a::JMP, &a::ABS, 3 },{ op::EOR, am::ABS, &a::EOR, &a::ABS, 4 },{ op::LSR, am::ABS, &a::LSR, &a::ABS, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },
+		{ op::BVC, am::REL, &a::BVC, &a::REL, 2 },{ op::EOR, am::IZY, &a::EOR, &a::IZY, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::EOR, am::ZPX, &a::EOR, &a::ZPX, 4 },{ op::LSR, am::ZPX, &a::LSR, &a::ZPX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },{ op::CLI, am::IMP, &a::CLI, &a::IMP, 2 },{ op::EOR, am::ABY, &a::EOR, &a::ABY, 4 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::EOR, am::ABX, &a::EOR, &a::ABX, 4 },{ op::LSR, am::ABX, &a::LSR, &a::ABX, 7 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },
+		{ op::RTS, am::IMP, &a::RTS, &a::IMP, 6 },{ op::ADC, am::IZX, &a::ADC, &a::IZX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 3 },{ op::ADC, am::ZP0, &a::ADC, &a::ZP0, 3 },{ op::ROR, am::ZP0, &a::ROR, &a::ZP0, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },{ op::PLA, am::IMP, &a::PLA, &a::IMP, 4 },{ op::ADC, am::IMM, &a::ADC, &a::IMM, 2 },{ op::ROR, am::ACC, &a::ROR, &a::ACC, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::JMP, am::IND, &a::JMP, &a::IND, 5 },{ op::ADC, am::ABS, &a::ADC, &a::ABS, 4 },{ op::ROR, am::ABS, &a::ROR, &a::ABS, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },
+		{ op::BVS, am::REL, &a::BVS, &a::REL, 2 },{ op::ADC, am::IZY, &a::ADC, &a::IZY, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::ADC, am::ZPX, &a::ADC, &a::ZPX, 4 },{ op::ROR, am::ZPX, &a::ROR, &a::ZPX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },{ op::SEI, am::IMP, &a::SEI, &a::IMP, 2 },{ op::ADC, am::ABY, &a::ADC, &a::ABY, 4 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::ADC, am::ABX, &a::ADC, &a::ABX, 4 },{ op::ROR, am::ABX, &a::ROR, &a::ABX, 7 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },
+		{ op::XXX, am::IMP, &a::NOP, &a::IMP, 2 },{ op::STA, am::IZX, &a::STA, &a::IZX, 6 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },{ op::STY, am::ZP0, &a::STY, &a::ZP0, 3 },{ op::STA, am::ZP0, &a::STA, &a::ZP0, 3 },{ op::STX, am::ZP0, &a::STX, &a::ZP0, 3 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 3 },{ op::DEY, am::IMP, &a::DEY, &a::IMP, 2 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 2 },{ op::TXA, am::IMP, &a::TXA, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::STY, am::ABS, &a::STY, &a::ABS, 4 },{ op::STA, am::ABS, &a::STA, &a::ABS, 4 },{ op::STX, am::ABS, &a::STX, &a::ABS, 4 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 4 },
+		{ op::BCC, am::REL, &a::BCC, &a::REL, 2 },{ op::STA, am::IZY, &a::STA, &a::IZY, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },{ op::STY, am::ZPX, &a::STY, &a::ZPX, 4 },{ op::STA, am::ZPX, &a::STA, &a::ZPX, 4 },{ op::STX, am::ZPY, &a::STX, &a::ZPY, 4 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 4 },{ op::TYA, am::IMP, &a::TYA, &a::IMP, 2 },{ op::STA, am::ABY, &a::STA, &a::ABY, 5 },{ op::TXS, am::IMP, &a::TXS, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 5 },{ op::STA, am::ABX, &a::STA, &a::ABX, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },
+		{ op::LDY, am::IMM, &a::LDY, &a::IMM, 2 },{ op::LDA, am::IZX, &a::LDA, &a::IZX, 6 },{ op::LDX, am::IMM, &a::LDX, &a::IMM, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },{ op::LDY, am::ZP0, &a::LDY, &a::ZP0, 3 },{ op::LDA, am::ZP0, &a::LDA, &a::ZP0, 3 },{ op::LDX, am::ZP0, &a::LDX, &a::ZP0, 3 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 3 },{ op::TAY, am::IMP, &a::TAY, &a::IMP, 2 },{ op::LDA, am::IMM, &a::LDA, &a::IMM, 2 },{ op::TAX, am::IMP, &a::TAX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::LDY, am::ABS, &a::LDY, &a::ABS, 4 },{ op::LDA, am::ABS, &a::LDA, &a::ABS, 4 },{ op::LDX, am::ABS, &a::LDX, &a::ABS, 4 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 4 },
+		{ op::BCS, am::REL, &a::BCS, &a::REL, 2 },{ op::LDA, am::IZY, &a::LDA, &a::IZY, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },{ op::LDY, am::ZPX, &a::LDY, &a::ZPX, 4 },{ op::LDA, am::ZPX, &a::LDA, &a::ZPX, 4 },{ op::LDX, am::ZPY, &a::LDX, &a::ZPY, 4 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 4 },{ op::CLV, am::IMP, &a::CLV, &a::IMP, 2 },{ op::LDA, am::ABY, &a::LDA, &a::ABY, 4 },{ op::TSX, am::IMP, &a::TSX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 4 },{ op::LDY, am::ABX, &a::LDY, &a::ABX, 4 },{ op::LDA, am::ABX, &a::LDA, &a::ABX, 4 },{ op::LDX, am::ABY, &a::LDX, &a::ABY, 4 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 4 },
+		{ op::CPY, am::IMM, &a::CPY, &a::IMM, 2 },{ op::CMP, am::IZX, &a::CMP, &a::IZX, 6 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::CPY, am::ZP0, &a::CPY, &a::ZP0, 3 },{ op::CMP, am::ZP0, &a::CMP, &a::ZP0, 3 },{ op::DEC, am::ZP0, &a::DEC, &a::ZP0, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },{ op::INY, am::IMP, &a::INY, &a::IMP, 2 },{ op::CMP, am::IMM, &a::CMP, &a::IMM, 2 },{ op::DEX, am::IMP, &a::DEX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::CPY, am::ABS, &a::CPY, &a::ABS, 4 },{ op::CMP, am::ABS, &a::CMP, &a::ABS, 4 },{ op::DEC, am::ABS, &a::DEC, &a::ABS, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },
+		{ op::BNE, am::REL, &a::BNE, &a::REL, 2 },{ op::CMP, am::IZY, &a::CMP, &a::IZY, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::CMP, am::ZPX, &a::CMP, &a::ZPX, 4 },{ op::DEC, am::ZPX, &a::DEC, &a::ZPX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },{ op::CLD, am::IMP, &a::CLD, &a::IMP, 2 },{ op::CMP, am::ABY, &a::CMP, &a::ABY, 4 },{ op::NOP, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::CMP, am::ABX, &a::CMP, &a::ABX, 4 },{ op::DEC, am::ABX, &a::DEC, &a::ABX, 7 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },
+		{ op::CPX, am::IMM, &a::CPX, &a::IMM, 2 },{ op::SBC, am::IZX, &a::SBC, &a::IZX, 6 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::CPX, am::ZP0, &a::CPX, &a::ZP0, 3 },{ op::SBC, am::ZP0, &a::SBC, &a::ZP0, 3 },{ op::INC, am::ZP0, &a::INC, &a::ZP0, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 5 },{ op::INX, am::IMP, &a::INX, &a::IMP, 2 },{ op::SBC, am::IMM, &a::SBC, &a::IMM, 2 },{ op::NOP, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::SBC, &a::IMP, 2 },{ op::CPX, am::ABS, &a::CPX, &a::ABS, 4 },{ op::SBC, am::ABS, &a::SBC, &a::ABS, 4 },{ op::INC, am::ABS, &a::INC, &a::ABS, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },
+		{ op::BEQ, am::REL, &a::BEQ, &a::REL, 2 },{ op::SBC, am::IZY, &a::SBC, &a::IZY, 5 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 8 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::SBC, am::ZPX, &a::SBC, &a::ZPX, 4 },{ op::INC, am::ZPX, &a::INC, &a::ZPX, 6 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 6 },{ op::SED, am::IMP, &a::SED, &a::IMP, 2 },{ op::SBC, am::ABY, &a::SBC, &a::ABY, 4 },{ op::NOP, am::IMP, &a::NOP, &a::IMP, 2 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },{ op::XXX, am::IMP, &a::NOP, &a::IMP, 4 },{ op::SBC, am::ABX, &a::SBC, &a::ABX, 4 },{ op::INC, am::ABX, &a::INC, &a::ABX, 7 },{ op::XXX, am::IMP, &a::XXX, &a::IMP, 7 },
+	}};
 }
 
 // #######################
 // #### BUS INTERFACE ####
 // #######################
 
-inline uint8_t RP2A03::read(uint16_t addr) noexcept {
+inline uint8_t RP2A03::read(uint16_t addr) const noexcept {
     return bus->read(addr, false);
 }
 
@@ -184,7 +186,18 @@ uint8_t RP2A03::IMP() noexcept {
     // The instruction operates on the accumulator or
     // on the processor status register
     // so there is no need to fetch any additional data
-    fetched = a; // ???
+    fetched = a;
+    return 0;
+}
+
+uint8_t RP2A03::ACC() noexcept {
+    // (Accumulator) Addressing Mode
+    // The instruction operates directly on the accumulator
+    // There is no additional data required for this instruction
+
+    // This is used by instructions that specifically operate on the
+    // accumulator, such as ASL A, ROL A, LSR A, ROR A, etc.
+    fetched = a;
     return 0;
 }
 
@@ -366,8 +379,11 @@ uint8_t RP2A03::REL() noexcept {
 // ######################
 
 uint8_t RP2A03::fetch() { // Helper function to fetch data
-    if (lookup[opcode].addrmode != &RP2A03::IMP)
+    if (lookup[opcode].addrmode != &RP2A03::IMP && lookup[opcode].addrmode != &RP2A03::ACC) {
+        // If the instruction does not use implied or accumulator addressing mode,
+        // we need to fetch the data from the effective address
         fetched = read(addr_abs);
+    }
     return fetched;  // Return just in case...
 }
 
@@ -517,7 +533,7 @@ uint8_t RP2A03::ASL() noexcept { // Arithmetic Shift Left
     SetFlag(C, (temp & 0xFF00) > 0);     // Set Carry flag if the highest bit of the original value is 1 (indicates a shift out of the byte)
     SetFlag(Z, (temp & 0x00FF) == 0x00); // Set Zero flag if result is zero
     SetFlag(N, temp & 0x0080);           // Set Negative flag if result's highest bit is set to 1
-    if (lookup[opcode].addrmode == &RP2A03::IMP)
+    if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;               // If the instruction operates on the accumulator, store the result back in the accumulator
     else
         write(addr_abs, temp & 0x00FF);
@@ -530,7 +546,7 @@ uint8_t RP2A03::LSR() noexcept { // Logical Shift Right
     temp = fetched >> 1;
     SetFlag(Z, (temp & 0x00FF) == 0x0000);
     SetFlag(N, temp & 0x0080);
-    if (lookup[opcode].addrmode == &RP2A03::IMP)
+    if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;
     else
         write(addr_abs, temp & 0x00FF);
@@ -547,7 +563,7 @@ uint8_t RP2A03::ROL() noexcept { // Rotate Left
     SetFlag(C, temp & 0xFF00);
     SetFlag(Z, (temp & 0x00FF) == 0x0000);
     SetFlag(N, temp & 0x0080);
-    if (lookup[opcode].addrmode == &RP2A03::IMP)
+    if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;
     else
         write(addr_abs, temp & 0x00FF);
@@ -561,7 +577,7 @@ uint8_t RP2A03::ROR() noexcept { // Rotate Right
     SetFlag(C, fetched & 0x01);
     SetFlag(Z, (temp & 0x00FF) == 0x00);
     SetFlag(N, temp & 0x0080);
-    if (lookup[opcode].addrmode == &RP2A03::IMP)
+    if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;
     else
         write(addr_abs, temp & 0x00FF);
