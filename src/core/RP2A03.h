@@ -37,8 +37,8 @@ public:
     constexpr static uint16_t NMI_VECTOR{0xFFFA};      // Non-maskable interrupt vector is located at 0xFFFA and 0xFFFB
     constexpr static uint16_t IRQ_VECTOR{0xFFFE};      // Interrupt request vector is located at 0xFFFE and 0xFFFF
 
-    void ConnectBus(Bus* n) { bus = n; }
-    const auto& getLookup() const noexcept { return lookup; }
+    void connect_bus(Bus* n) { bus = n; }
+    const auto& get_lookup() const noexcept { return lookup; }
 
     enum class DEBUG_MNEMONIC : uint8_t {
         ADC, AND, ASL, 

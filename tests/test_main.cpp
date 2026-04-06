@@ -9,11 +9,11 @@ TEST_CASE("Basic test", "[utils]") {
     Bus bus;
 
     // Write some test data to the bus
-    bus.write(0x0000, 0xA9); // LDA Immediate opcode
-    bus.write(0x0001, 0x01); // Operand for LDA
+    bus.write(0x0000, 0xA9);  // LDA Immediate opcode
+    bus.write(0x0001, 0x01);  // Operand for LDA
 
     // Create a disassembler instance
-    Disassembler disasm(&bus, bus.cpu.getLookup());
+    Disassembler disasm(&bus, bus.cpu.get_lookup());
 
     // Disassemble the instruction at address 0x0000
     auto line = disasm.disassemble(0x0000);
