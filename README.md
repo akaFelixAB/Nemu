@@ -1,64 +1,82 @@
-# Nemu
+# 🎮 Nemu
 
-[NES / Famicom Architecture](https://www.copetti.org/zh-hans/writings/consoles/nes/)
+A modern, modular NES (Nintendo Entertainment System) emulator written in C++20.
 
-## 项目结构
+## 📦 Project Structure
+
 ```
 Nemu/
-├── src/            # 主程序源码
-│   └── main.cpp    # 示例主程序
-├── tests/          # 单元测试（可选，默认启用 Catch2）
+├── src/            # Main source code
+│   └── main.cpp    # Example entry point
+├── tests/          # Unit tests (Catch2 enabled by default)
 │   ├── test_main.cpp
 │   └── CMakeLists.txt
-├── CMakeLists.txt  # 顶层 CMake 配置
-├── README.md       # 项目说明
-└── LICENSE         # 许可证
+├── CMakeLists.txt  # Top-level CMake configuration
+├── README.md       # Project documentation
+└── LICENSE         # Apache 2.0 License
 ```
 
-## 构建要求
-- C++20 编译器（推荐 g++ 10 及以上）
+## 🚀 Features
+
+- Modern C++20 codebase
+- Clean, extensible architecture
+- Unit testing with Catch2 (default, easily extendable)
+- Focus on readability and best practices
+
+## 🛠️ Requirements
+
+- C++20 compatible compiler (recommended: g++ 10+)
 - CMake >= 3.16
-- 推荐 Ninja 作为构建后端（可选）
+- [Optional] Ninja build system
 
-## 构建步骤
-1. 安装依赖：
-	- g++: `sudo apt install g++`
-	- cmake: `sudo apt install cmake`
-	- ninja（可选，推荐）：`sudo apt install ninja-build`
+## ⚡ Build Instructions
 
-2. 生成构建目录并编译：
-	```fish
-	mkdir build
-	cd build
-	cmake -G Ninja ..   # 使用 Ninja
-	# 或
-	cmake ..            # 使用默认生成器
-	cmake --build .
-	```
+1. **Install dependencies:**
+   - g++: `sudo apt install g++`
+   - cmake: `sudo apt install cmake`
+   - ninja (optional, recommended): `sudo apt install ninja-build`
 
-3. 运行主程序：
-	```fish
-	./Nemu
-	```
+2. **Generate build directory and compile:**
+   ```sh
+   mkdir build
+   cd build
+   cmake -G Ninja ..   # Use Ninja
+   # or
+   cmake ..            # Use default generator
+   cmake --build .
+   ```
 
-## 单元测试（可选）
-- 默认启用 Catch2 测试框架，自动下载并集成。
-- 构建后运行测试：
-	```fish
-	cd build
-	ctest
-	```
+3. **Run the main program:**
+   ```sh
+   ./Nemu
+   ```
 
-## 关键配置说明
-- `CMakeLists.txt` 自动设置 C++20 标准，推荐 g++，并支持 Ninja。
-- 可通过 `NEMU_ENABLE_TESTS` 选项启用/禁用测试。
-- 测试框架可选 Catch2（默认），可扩展为 Google Test。
+## 🧪 Unit Testing
 
-## 现代 C++最佳实践
-- 使用 C++20 标准
-- 清晰的项目结构，易于扩展
-- 代码风格简洁，注重可读性
+- Catch2 is enabled by default and auto-integrated.
+- To run tests after building:
+  ```sh
+  cd build
+  ctest
+  ```
+
+## ⚙️ Configuration Highlights
+
+- C++20 standard enforced via CMake
+- Ninja build system supported
+- Unit tests can be toggled with `NEMU_ENABLE_TESTS` (ON by default)
+- Easily extendable to other test frameworks (e.g., Google Test)
+
+## ✨ Best Practices
+
+- Modern C++20 features
+- Clean, modular project structure
+- Readable, maintainable code
+
+## 📄 License
+
+Licensed under the [Apache License 2.0](LICENSE).
 
 ---
 
-如需自定义或扩展，请参考 CMake 文档和 Catch2 官方文档。
+Feel free to customize or extend the project. For more details, refer to the CMake and Catch2 documentation.
