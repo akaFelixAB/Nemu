@@ -5,7 +5,7 @@ Bus::Bus() {
     ram.fill(0x00);
 
     // Connect CPU to this bus
-    cpu.ConnectBus(this);
+    cpu.connect_bus(this);
 }
 
 Bus::~Bus() = default;
