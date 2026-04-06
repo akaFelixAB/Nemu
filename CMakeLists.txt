@@ -30,7 +30,7 @@ FetchContent_Declare(
     GIT_TAG v3.5.2
 )
 
-option(NEMU_ENABLE_TESTS "Enable unit tests" OFF) # Turn on with -DNEMU_ENABLE_TESTS=ON
+option(NEMU_ENABLE_TESTS "Enable unit tests" ON) # Turn off with -DNEMU_ENABLE_TESTS=OFF
 if (NEMU_ENABLE_TESTS)
     enable_testing()
     FetchContent_MakeAvailable(Catch2)
