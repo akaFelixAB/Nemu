@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 4.2)
 project(Nemu LANGUAGES CXX)
 
 # Set C++ standard
@@ -18,12 +18,62 @@ if (CMAKE_GENERATOR STREQUAL "Ninja")
     message(STATUS "Ninja build system detected.")
 endif()
 
-# Main executable
-add_executable(Nemu src/main.cpp src/core/Bus.cpp src/core/RP2A03.cpp src/utils/Disassembler.cpp)
-
-# Testing
 include(FetchContent)
 
+# ----------------------------
+# SDL3
+# ----------------------------
+find_package(SDL3 REQUIRED)
+
+# ----------------------------
+# Dear ImGui
+# ----------------------------
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG v1.92.7
+)
+FetchContent_GetProperties(imgui)
+
+FetchContent_MakeAvailable(imgui)
+
+# ImGui static library
+add_library(imgui STATIC
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+    ${imgui_SOURCE_DIR}/imgui_demo.cpp
+
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
+target_include_directories(imgui PUBLIC
+    ${imgui_SOURCE_DIR}
+    ${imgui_SOURCE_DIR}/backends
+)
+
+target_link_libraries(imgui PUBLIC SDL3::SDL3)
+
+# ----------------------------
+# OpenGL
+# ----------------------------
+find_package(OpenGL REQUIRED)
+
+# ----------------------------
+# Main executable
+# ----------------------------
+add_executable(Nemu
+    src/gui/gui_main.cpp 
+    src/core/Bus.cpp 
+    src/core/RP2A03.cpp 
+    src/utils/Disassembler.cpp
+)
+
+# ----------------------------
+# Testing
+# ----------------------------
 FetchContent_Declare(
     Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
