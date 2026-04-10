@@ -13,6 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Setup SDL3
+        uses: libsdl-org/setup-sdl@main
+        id: sdl
+        with:
+          install-linux-dependencies: true
+          version: 3-latest
+          version-sdl-image: 3-latest
+
       - name: Cache CMake deps
         uses: actions/cache@v5
         with:

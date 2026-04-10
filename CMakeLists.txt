@@ -23,7 +23,7 @@ include(FetchContent)
 # ----------------------------
 # SDL3
 # ----------------------------
-find_package(SDL3 REQUIRED)
+find_package(SDL3 REQUIRED CONFIG)
 
 # ----------------------------
 # Dear ImGui
