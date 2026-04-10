@@ -71,6 +71,12 @@ add_executable(Nemu
     src/utils/Disassembler.cpp
 )
 
+target_link_libraries(Nemu PRIVATE
+    imgui
+    SDL3::SDL3
+    OpenGL::GL
+)
+
 # ----------------------------
 # Testing
 # ----------------------------
