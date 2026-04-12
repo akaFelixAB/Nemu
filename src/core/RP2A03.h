@@ -142,7 +142,7 @@ private:
 
     // get flag & set flag (just for convenience)
     inline uint8_t  get_flag(FLAGS6502 flag) const noexcept;
-    inline void     Set_flag(FLAGS6502 flag, bool value) noexcept;
+    inline void     set_flag(FLAGS6502 flag, bool value) noexcept;
 
     std::array<INSTRUCTION, 256> lookup;
 };

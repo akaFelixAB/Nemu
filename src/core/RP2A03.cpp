@@ -1,5 +1,3 @@
-#include <cstdint>
-
 #include "RP2A03.h"
 
 #include "Bus.h"
@@ -35,15 +33,15 @@ RP2A03::RP2A03() {
 // #######################
 
 inline uint8_t RP2A03::read(uint16_t addr) const noexcept {
-    return bus->read(addr, false);
+    return bus->cpu_read(addr, false);
 }
 
 inline void RP2A03::write(uint16_t addr, uint8_t data) noexcept {
-    bus->write(addr, data);
+    bus->cpu_write(addr, data);
 }
 
 inline uint8_t RP2A03::get_flag(FLAGS6502 flag) const noexcept { return (status & flag) > 0 ? 1 : 0; }
-inline void RP2A03::Set_flag(FLAGS6502 flag, bool value) noexcept {
+inline void RP2A03::set_flag(FLAGS6502 flag, bool value) noexcept {
     if (value) {
         status |= flag;
     } else {
@@ -113,9 +111,9 @@ void RP2A03::irq() {
 
         // When an interrupt occurs, the processor automatically pushes the
         // current program counter and status register onto the stack
-        Set_flag(B, 0);
-        Set_flag(U, 1);
-        Set_flag(I, 1);  // Disable further interrupts
+        set_flag(B, 0);
+        set_flag(U, 1);
+        set_flag(I, 1);  // Disable further interrupts
         write(STACK_BASE + sp, status);  // Push the processor status onto the stack
         sp--;
 
@@ -139,9 +137,9 @@ void RP2A03::nmi() {
     write(STACK_BASE + sp, pc & 0x00FF);  // Push the low byte of the program counter
     sp--;                                 // onto the stack
 
-    Set_flag(B, 0);
-    Set_flag(U, 1);
-    Set_flag(I, 1);                  // Disable further interrupts
+    set_flag(B, 0);
+    set_flag(U, 1);
+    set_flag(I, 1);                  // Disable further interrupts
     write(STACK_BASE + sp, status);  // Push the processor status onto the stack
     sp--;
 
@@ -379,24 +377,24 @@ uint8_t RP2A03::fetch() { // Helper function to fetch data
 uint8_t RP2A03::LDA() noexcept {  // Load Accumulator
     fetch();
     a = fetched;
-    Set_flag(Z, a == 0x00);
-    Set_flag(N, a & 0x80);
+    set_flag(Z, a == 0x00);
+    set_flag(N, a & 0x80);
     return 1;
 }
 
 uint8_t RP2A03::LDX() noexcept {  // Load X Register
     fetch();
     x = fetched;
-    Set_flag(Z, x == 0x00);
-    Set_flag(N, x & 0x80);
+    set_flag(Z, x == 0x00);
+    set_flag(N, x & 0x80);
     return 1;
 }
 
 uint8_t RP2A03::LDY() noexcept {  // Load Y Register
     fetch();
     y = fetched;
-    Set_flag(Z, y == 0x00);
-    Set_flag(N, y & 0x80);
+    set_flag(Z, y == 0x00);
+    set_flag(N, y & 0x80);
     return 1;
 }
 
@@ -417,29 +415,29 @@ uint8_t RP2A03::STY() noexcept {  // Store Y Register
 
 uint8_t RP2A03::TAX() noexcept {  // Transfer Accumulator to X
     x = a;
-    Set_flag(Z, x == 0x00);
-    Set_flag(N, x & 0x80);
+    set_flag(Z, x == 0x00);
+    set_flag(N, x & 0x80);
     return 0;
 }
 
 uint8_t RP2A03::TAY() noexcept {  // Transfer Accumulator to Y
     y = a;
-    Set_flag(Z, y == 0x00);
-    Set_flag(N, y & 0x80);
+    set_flag(Z, y == 0x00);
+    set_flag(N, y & 0x80);
     return 0;
 }
 
 uint8_t RP2A03::TSX() noexcept {  // Transfer Stack Pointer to X
     x = sp;
-    Set_flag(Z, x == 0x00);
-    Set_flag(N, x & 0x80);
+    set_flag(Z, x == 0x00);
+    set_flag(N, x & 0x80);
     return 0;
 }
 
 uint8_t RP2A03::TXA() noexcept {  // Transfer X to Accumulator
     a = x;
-    Set_flag(Z, a == 0x00);
-    Set_flag(N, a & 0x80);
+    set_flag(Z, a == 0x00);
+    set_flag(N, a & 0x80);
     return 0;
 }
 
@@ -450,8 +448,8 @@ uint8_t RP2A03::TXS() noexcept {  // Transfer X to Stack Pointer
 
 uint8_t RP2A03::TYA() noexcept {  // Transfer Y to Accumulator
     a = y;
-    Set_flag(Z, a == 0x00);
-    Set_flag(N, a & 0x80);
+    set_flag(Z, a == 0x00);
+    set_flag(N, a & 0x80);
     return 0;
 }
 
@@ -483,10 +481,10 @@ uint8_t RP2A03::ADC() noexcept {
 
     fetch();
     temp = (uint16_t)a + (uint16_t)fetched + (uint16_t)get_flag(C);
-    Set_flag(C, temp > 0x00FF);         // Set Carry flag if result exceeds 8 bits
-    Set_flag(Z, (temp & 0x00FF) == 0);  // Set Zero flag if result is zero
-    Set_flag(N, temp & 0x0080);         // Set Negative flag if result's highest bit is set to 1
-    Set_flag(V, (~((uint16_t)a ^ (uint16_t)fetched) & ((uint16_t)a ^ (uint16_t)temp)) & 0x0080);
+    set_flag(C, temp > 0x00FF);         // Set Carry flag if result exceeds 8 bits
+    set_flag(Z, (temp & 0x00FF) == 0);  // Set Zero flag if result is zero
+    set_flag(N, temp & 0x0080);         // Set Negative flag if result's highest bit is set to 1
+    set_flag(V, (~((uint16_t)a ^ (uint16_t)fetched) & ((uint16_t)a ^ (uint16_t)temp)) & 0x0080);
                                         // Set Overflow flag based on the conditions described above
     a = temp & 0x00FF;                  // Store the result back in the accumulator (only the lower 8 bits)
     return 1;  // Potentially add an additional clock cycle if page boundary is crossed
@@ -502,10 +500,10 @@ uint8_t RP2A03::SBC() noexcept {
     fetch();
     uint16_t value = ((uint16_t)fetched) ^ 0x00FF;      // Invert the bits of the fetched value for subtraction
     temp = (uint16_t)a + value + (uint16_t)get_flag(C); // Add the inverted value and the carry flag to the accumulator
-    Set_flag(C, temp > 0x00FF);        // Set Carry flag if result exceeds 8 bits (indicates no borrow)
-    Set_flag(Z, (temp & 0x00FF) == 0); // Set Zero flag if result is zero
-    Set_flag(N, temp & 0x0080);        // Set Negative flag if result's highest bit is set to 1
-    Set_flag(V, (((uint16_t)a ^ value) & ((uint16_t)a ^ temp)) & 0x0080);
+    set_flag(C, temp > 0x00FF);        // Set Carry flag if result exceeds 8 bits (indicates no borrow)
+    set_flag(Z, (temp & 0x00FF) == 0); // Set Zero flag if result is zero
+    set_flag(N, temp & 0x0080);        // Set Negative flag if result's highest bit is set to 1
+    set_flag(V, (((uint16_t)a ^ value) & ((uint16_t)a ^ temp)) & 0x0080);
                                        // Set Overflow flag based on the conditions for subtraction
     a = temp & 0x00FF;                 // Store the result back in the accumulator (only the lower 8 bits)
     return 1;  // Potentially add an additional clock cycle if page boundary is crossed
@@ -514,9 +512,9 @@ uint8_t RP2A03::SBC() noexcept {
 uint8_t RP2A03::ASL() noexcept {  // Arithmetic Shift Left
     fetch();
     temp = (uint16_t)fetched << 1;
-    Set_flag(C, (temp & 0xFF00) > 0);      // Set Carry flag if the highest bit of the original value is 1 (indicates a shift out of the byte)
-    Set_flag(Z, (temp & 0x00FF) == 0x00);  // Set Zero flag if result is zero
-    Set_flag(N, temp & 0x0080);            // Set Negative flag if result's highest bit is set to 1
+    set_flag(C, (temp & 0xFF00) > 0);      // Set Carry flag if the highest bit of the original value is 1 (indicates a shift out of the byte)
+    set_flag(Z, (temp & 0x00FF) == 0x00);  // Set Zero flag if result is zero
+    set_flag(N, temp & 0x0080);            // Set Negative flag if result's highest bit is set to 1
     if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;                // If the instruction operates on the accumulator, store the result back in the accumulator
     else
@@ -526,10 +524,10 @@ uint8_t RP2A03::ASL() noexcept {  // Arithmetic Shift Left
 
 uint8_t RP2A03::LSR() noexcept {  // Logical Shift Right
     fetch();
-    Set_flag(C, fetched & 0x0001);
+    set_flag(C, fetched & 0x0001);
     temp = fetched >> 1;
-    Set_flag(Z, (temp & 0x00FF) == 0x0000);
-    Set_flag(N, temp & 0x0080);
+    set_flag(Z, (temp & 0x00FF) == 0x0000);
+    set_flag(N, temp & 0x0080);
     if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;
     else
@@ -544,9 +542,9 @@ uint8_t RP2A03::ROL() noexcept {  // Rotate Left
     // E.g. 0b10110011 C = 0 ==> ROL ==> 0b01100110 C = 1
     fetch();
     temp = (uint16_t)(fetched << 1) | get_flag(C);
-    Set_flag(C, temp & 0xFF00);
-    Set_flag(Z, (temp & 0x00FF) == 0x0000);
-    Set_flag(N, temp & 0x0080);
+    set_flag(C, temp & 0xFF00);
+    set_flag(Z, (temp & 0x00FF) == 0x0000);
+    set_flag(N, temp & 0x0080);
     if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;
     else
@@ -558,9 +556,9 @@ uint8_t RP2A03::ROR() noexcept {  // Rotate Right
     // E.g. 0b10110011 C = 1 ==> ROR ==> 0b11011001 C = 1
     fetch();
     temp = (uint16_t)(get_flag(C) << 7) | (fetched >> 1);
-    Set_flag(C, fetched & 0x01);
-    Set_flag(Z, (temp & 0x00FF) == 0x00);
-    Set_flag(N, temp & 0x0080);
+    set_flag(C, fetched & 0x01);
+    set_flag(Z, (temp & 0x00FF) == 0x00);
+    set_flag(N, temp & 0x0080);
     if (lookup[opcode].addrmode == &RP2A03::IMP || lookup[opcode].addrmode == &RP2A03::ACC)
         a = temp & 0x00FF;
     else
@@ -571,27 +569,27 @@ uint8_t RP2A03::ROR() noexcept {  // Rotate Right
 uint8_t RP2A03::CMP() noexcept {  // Compare Accumulator
     fetch();
     temp = (uint16_t)a - (uint16_t)fetched;  // Perform the subtraction to compare the values
-    Set_flag(C, a >= fetched);               // Set Carry flag if the accumulator is greater than or equal to the fetched value (indicates no borrow)
-    Set_flag(Z, (temp & 0x00FF) == 0x0000);  // Set Zero flag if the result of the comparison is zero (indicates equality)
-    Set_flag(N, temp & 0x0080);  // Set Negative flag if the result's highest bit is set to 1 (indicates the accumulator is less than the fetched value)
+    set_flag(C, a >= fetched);               // Set Carry flag if the accumulator is greater than or equal to the fetched value (indicates no borrow)
+    set_flag(Z, (temp & 0x00FF) == 0x0000);  // Set Zero flag if the result of the comparison is zero (indicates equality)
+    set_flag(N, temp & 0x0080);  // Set Negative flag if the result's highest bit is set to 1 (indicates the accumulator is less than the fetched value)
     return 1;
 }
 
 uint8_t RP2A03::CPX() noexcept {  // Compare X Register
     fetch();
     temp = (uint16_t)x - (uint16_t)fetched;
-    Set_flag(C, x >= fetched);
-    Set_flag(Z, (temp & 0x00FF) == 0x0000);
-    Set_flag(N, temp & 0x0080);
+    set_flag(C, x >= fetched);
+    set_flag(Z, (temp & 0x00FF) == 0x0000);
+    set_flag(N, temp & 0x0080);
     return 0;
 }
 
 uint8_t RP2A03::CPY() noexcept {  // Compare Y Register
     fetch();
     temp = (uint16_t)y - (uint16_t)fetched;
-    Set_flag(C, y >= fetched);
-    Set_flag(Z, (temp & 0x00FF) == 0x0000);
-    Set_flag(N, temp & 0x0080);
+    set_flag(C, y >= fetched);
+    set_flag(Z, (temp & 0x00FF) == 0x0000);
+    set_flag(N, temp & 0x0080);
     return 0;
 }
 
@@ -599,46 +597,46 @@ uint8_t RP2A03::DEC() noexcept {  // Decrement Memory
     fetch();
     temp = fetched - 1;
     write(addr_abs, temp & 0x00FF);
-    Set_flag(Z, (temp & 0x00FF) == 0x0000);
-    Set_flag(N, temp & 0x0080);
+    set_flag(Z, (temp & 0x00FF) == 0x0000);
+    set_flag(N, temp & 0x0080);
     return 0;
 }
 
 uint8_t RP2A03::DEX() noexcept {  // Decrement X Register
     x--;
-    Set_flag(Z, x == 0x00);
-    Set_flag(N, x & 0x80);
+    set_flag(Z, x == 0x00);
+    set_flag(N, x & 0x80);
     return 0;
 }
 
 uint8_t RP2A03::DEY() noexcept {  // Decrement Y Register
     y--;
-    Set_flag(Z, y == 0x00);
-    Set_flag(N, y & 0x80);
+    set_flag(Z, y == 0x00);
+    set_flag(N, y & 0x80);
     return 0;
 }
 
 uint8_t RP2A03::AND() noexcept {  // Logical AND
     fetch();
     a &= fetched;
-    Set_flag(Z, a == 0x00);  // Set Zero flag if result is zero
-    Set_flag(N, a & 0x80);   // Set Negative flag if result's highest bit is set to 1
+    set_flag(Z, a == 0x00);  // Set Zero flag if result is zero
+    set_flag(N, a & 0x80);   // Set Negative flag if result's highest bit is set to 1
     return 1;  // Potentially add an additional clock cycle if page boundary is crossed
 }
 
 uint8_t RP2A03::ORA() noexcept {  // Inclusive OR
     fetch();
     a = a | fetched;
-    Set_flag(Z, a == 0x00);
-    Set_flag(N, a & 0x80);
+    set_flag(Z, a == 0x00);
+    set_flag(N, a & 0x80);
     return 1;
 }
 
 uint8_t RP2A03::EOR() noexcept {  // Exclusive OR
     fetch();
     a = a ^ fetched;
-    Set_flag(Z, a == 0x00);
-    Set_flag(N, a & 0x80);
+    set_flag(Z, a == 0x00);
+    set_flag(N, a & 0x80);
     return 1;
 }
 
@@ -646,22 +644,22 @@ uint8_t RP2A03::INC() noexcept {  // Increment Memory
     fetch();
     temp = fetched + 1;
     write(addr_abs, temp & 0x00FF);
-    Set_flag(Z, (temp & 0x00FF) == 0x0000);
-    Set_flag(N, temp & 0x0080);
+    set_flag(Z, (temp & 0x00FF) == 0x0000);
+    set_flag(N, temp & 0x0080);
     return 0;
 }
 
 uint8_t RP2A03::INX() noexcept {  // Increment X Register
     x++;
-    Set_flag(Z, x == 0x00);
-    Set_flag(N, x & 0x80);
+    set_flag(Z, x == 0x00);
+    set_flag(N, x & 0x80);
     return 0;
 }
 
 uint8_t RP2A03::INY() noexcept {  // Increment Y Register
     y++;
-    Set_flag(Z, y == 0x00);
-    Set_flag(N, y & 0x80);
+    set_flag(Z, y == 0x00);
+    set_flag(N, y & 0x80);
     return 0;
 }
 
@@ -795,46 +793,46 @@ uint8_t RP2A03::JSR() noexcept {  // Jump to Subroutine
 // Each of these instructions set or clear a specific processor status flag
 
 uint8_t RP2A03::CLC() noexcept {  // Clear Carry Flag
-    Set_flag(C, false);
+    set_flag(C, false);
     return 0;
 }
 
 uint8_t RP2A03::CLD() noexcept {  // Clear Decimal Mode
-    Set_flag(D, false);
+    set_flag(D, false);
     return 0;
 }
 
 uint8_t RP2A03::CLI() noexcept {  // Clear Interrupt Disable
-    Set_flag(I, false);
+    set_flag(I, false);
     return 0;
 }
 
 uint8_t RP2A03::CLV() noexcept {  // Clear Overflow Flag
-    Set_flag(V, false);
+    set_flag(V, false);
     return 0;
 }
 
 uint8_t RP2A03::SEC() noexcept {  // Set Carry Flag
-    Set_flag(C, true);
+    set_flag(C, true);
     return 0;
 }
 
 uint8_t RP2A03::SED() noexcept {  // Set Decimal Flag
-    Set_flag(D, true);
+    set_flag(D, true);
     return 0;
 }
 
 uint8_t RP2A03::SEI() noexcept {  // Set Interrupt Disable
-    Set_flag(I, true);
+    set_flag(I, true);
     return 0;
 }
 
 uint8_t RP2A03::BIT() noexcept {  // Test Bits in Memory with Accumulator
     fetch();
     temp = a & fetched;
-    Set_flag(Z, (temp & 0x00FF) == 0x00);  // Set Zero flag if result is zero
-    Set_flag(N, fetched & (1 << 7));       // Set Negative flag based on the highest bit of the fetched value
-    Set_flag(V, fetched & (1 << 6));       // Set Overflow flag based on the 6th bit of the fetched value
+    set_flag(Z, (temp & 0x00FF) == 0x00);  // Set Zero flag if result is zero
+    set_flag(N, fetched & (1 << 7));       // Set Negative flag based on the highest bit of the fetched value
+    set_flag(V, fetched & (1 << 6));       // Set Overflow flag based on the 6th bit of the fetched value
     return 0;
 }
 
@@ -850,15 +848,15 @@ uint8_t RP2A03::PHA() noexcept {  // Push Accumulator
 uint8_t RP2A03::PLA() noexcept {  // Pop Accumulator
     sp++;
     a = read(STACK_BASE + sp);
-    Set_flag(Z, a == 0x00);   // Set Zero flag if result is zero
-    Set_flag(N, a & 0x0080);  // Set Negative flag if result's highest bit is set to 1
+    set_flag(Z, a == 0x00);   // Set Zero flag if result is zero
+    set_flag(N, a & 0x0080);  // Set Negative flag if result's highest bit is set to 1
     return 0;
 }
 
 uint8_t RP2A03::PHP() noexcept {  // Push Processor Status
     write(STACK_BASE + sp, status | B | U);
-    Set_flag(B, 1);
-    Set_flag(U, 1);
+    set_flag(B, 1);
+    set_flag(U, 1);
     sp--;
     return 0;
 }
@@ -866,7 +864,7 @@ uint8_t RP2A03::PHP() noexcept {  // Push Processor Status
 uint8_t RP2A03::PLP() noexcept {  // Pop Processor Status
     sp++;
     status = read(STACK_BASE + sp);
-    Set_flag(U, 1);
+    set_flag(U, 1);
     return 0;
 }
 
@@ -875,8 +873,8 @@ uint8_t RP2A03::PLP() noexcept {  // Pop Processor Status
 uint8_t RP2A03::RTI() noexcept {  // Return from Interrupt
     sp++;
     status = read(STACK_BASE + sp);  // Pull the processor status from the stack
-    Set_flag(B, 0);                  // Clear the Break flag
-    Set_flag(U, 1);                  // Set the unused flag to 1 (it is always set to 1)
+    set_flag(B, 0);                  // Clear the Break flag
+    set_flag(U, 1);                  // Set the unused flag to 1 (it is always set to 1)
     
     sp++;
     uint16_t lo = read(STACK_BASE + sp);  // Pull the low byte of the program counter from the stack
@@ -900,7 +898,7 @@ uint8_t RP2A03::RTS() noexcept {  // Return from Subroutine
 uint8_t RP2A03::BRK() noexcept {  // Force Interrupt
     pc++;
 
-    Set_flag(I, 1);  // Set Interrupt Disable flag to prevent further interrupts
+    set_flag(I, 1);  // Set Interrupt Disable flag to prevent further interrupts
     write(STACK_BASE + sp, (pc >> 8) & 0x00FF);
     sp--;
     write(STACK_BASE + sp, pc & 0x00FF);

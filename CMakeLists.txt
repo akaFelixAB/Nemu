@@ -45,8 +45,10 @@ find_package(OpenGL REQUIRED)
 # ----------------------------
 add_executable(Nemu
     src/gui/gui_main.cpp 
+    src/gui/Debugger.cpp 
     src/core/Bus.cpp 
     src/core/RP2A03.cpp 
+    src/core/RP2C02.cpp
     src/utils/Disassembler.cpp
 )
 
