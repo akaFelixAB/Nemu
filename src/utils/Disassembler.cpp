@@ -10,7 +10,7 @@ Disassembler::Disassembler(
     : bus(bus), lookup(lookup) {}
 
 uint8_t Disassembler::read(uint16_t addr) const noexcept {
-    return bus->read(addr, true);
+    return bus->cpu_read(addr, true);
 }
 
 Disassembler::DisasmLine Disassembler::disassemble(uint16_t addr) const {
@@ -43,6 +43,20 @@ std::vector<Disassembler::DisasmLine> Disassembler::disassemble(
         lines.push_back(std::move(line));
     }
     return lines;
+}
+
+std::string Disassembler::get_memory_layout(uint16_t start, size_t count) const {
+    std::string out;
+    // Each byte will take up to 3 chars (e.g. "FF ") and we want a space
+    // between bytes, so reserve 3 chars per byte for efficiency
+    out.reserve(count * 3);
+
+    for (size_t i = 0; i < count; i++) {
+        uint8_t byte = read(static_cast<uint16_t>(start + i));
+        append_hex_8(out, byte);
+        out.push_back(' ');
+    }
+    return out;
 }
 
 std::string Disassembler::format(const DisasmLine& line) const {

@@ -64,6 +64,8 @@ class Disassembler {
     std::vector<DisasmLine> disassemble(uint16_t start, size_t count) const;
     DisasmLine disassemble(uint16_t addr) const;
 
+    std::string get_memory_layout(uint16_t start, size_t count) const;
+
     // Format the disassembly text based on the instruction and its addressing
     // mode
     std::string format(const DisasmLine& line) const;
