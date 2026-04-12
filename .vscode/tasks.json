@@ -6,7 +6,7 @@
             "label": "CMake: build",
             "command": "build",
             "targets": [
-                "test_main"
+                "Nemu"
             ],
             "group": {
                 "kind": "build",
