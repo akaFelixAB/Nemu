@@ -55,6 +55,9 @@ std::string Disassembler::get_memory_layout(uint16_t start, size_t count) const 
         uint8_t byte = read(static_cast<uint16_t>(start + i));
         append_hex_8(out, byte);
         out.push_back(' ');
+        if ((i + 1) % 16 == 0) {
+            out.push_back('\n');  // New line every 16 bytes for readability
+        }
     }
     return out;
 }
